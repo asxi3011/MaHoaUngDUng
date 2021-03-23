@@ -5,14 +5,18 @@
  */
 package ChuyenDichDong;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author buile
  */
 public class ChuyenDichDongForm extends javax.swing.JFrame {
+
+    private Component frame;
 
     /**
      * Creates new form ChuyenDichDongForm
@@ -128,90 +132,75 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDecryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecryptionActionPerformed
+        
         try
-        {
+        {   
         String keyDecryption =   txtKeyDecryption.getText().replaceAll("\\s", "");
         String cipherText =  tereaDecryption.getText().replaceAll("\\s", "");
-        if(checkInput(keyDecryption, cipherText)) {
-            String[] arraylainText = {};
-            arraylainText=Decryption(keyDecryption, cipherText, arraylainText);
-            String plainText="";
-            for (String str : arraylainText) {
-                 plainText += str;
-            }    
-            tareaEcryption.setText(plainText);
-        }
+        if(keyDecryption.length()==0 || cipherText.length()==0)
+             JOptionPane.showMessageDialog(frame, "Khong được bỏ trống");
         else
         {
-            System.out.println("CipherText Hoac Key Giai Ma Sai");
+            String arraylainText=decryptCT(keyDecryption, cipherText);
+            tareaEcryption.setText(arraylainText); 
         }
+           
         }
-    
          catch(Exception  e){
-         System.out.println("Vui long nhap day du thong tin");
+            Component frame = null;
+         JOptionPane.showMessageDialog(frame, "Key hoặc cipher text kh hợp lệ");
        }
         
     }//GEN-LAST:event_btnDecryptionActionPerformed
      
-    private boolean checkInput(String keyDecryption,String cipherText)
-    {
-        
-             if (cipherText.length()%keyDecryption.length()!=0 || cipherText.length()/keyDecryption.length() < keyDecryption.length())       
-                 return false;
-            
-             else
-                 return true;
-        
-    }
   
-    private String[] Decryption(String keyDecryption,String cipherText,String[] s)
-    {
-        String sortCipherText= sortCipherText(keyDecryption, cipherText, s);
-        int step = cipherText.length()/keyDecryption.length();
-        String[] arrayPlainText = {};  
-        for (int i = 1; i < step; i++) {
-            for (int indexStart = i; indexStart < cipherText.length(); indexStart+=step) {
-                arrayPlainText =insertElement(arrayPlainText, sortCipherText.substring(indexStart,indexStart+1), arrayPlainText.length);
+  
+    public static String decryptCT(String key, String text) {
+        int[] arrange = arrangeKey(key);
+        int lenkey = arrange.length;
+        int lentext = text.length();
+        int row = (int) Math.ceil((double) lentext / lenkey);
+        String regex = "(?<=\\G.{" + row + "})";
+        String[] get = text.split(regex);
+
+        char[][] grid = new char[row][lenkey];
+
+        for (int x = 0; x < lenkey; x++) {
+            for (int y = 0; y < lenkey; y++) {
+                if (arrange[x] == y) {
+                    for (int z = 0; z < row; z++) {
+                        grid[z][y] = get[arrange[y]].charAt(z);
+                    }
+                }
             }
         }
-        return arrayPlainText;
-    }
-     private String sortCipherText(String keyDecryption,String cipherText,String[] arrayCipherText)
-    {
-        arrayCipherText = splitSubString(keyDecryption, cipherText, arrayCipherText);
-        String plainText="";
-        int numberLoop = 0;
-        while(numberLoop != keyDecryption.length())
-        {
-            for (int j = 0; j < keyDecryption.length(); j++) {
-                  String partCipherText = arrayCipherText[j];
-                  String firstpartCipherText = partCipherText.substring(0,1);
-             if(Character.toString(keyDecryption.charAt(numberLoop)).startsWith(firstpartCipherText))
-            {
-                plainText=plainText+partCipherText;
-                break;
+        String dec = "";
+        for (int x = 0; x < row; x++) {
+            for (int y = 0; y < lenkey; y++) {
+                dec = dec + grid[x][y];
             }
-            }          
-            numberLoop++;
         }
-        return plainText;
+
+        return dec;
     }
+    public static int[] arrangeKey(String key) {
+        //arrange position of grid
+        String[] keys = key.split("");
+        Arrays.sort(keys);
+        int[] num = new int[key.length()];
+        for (int x = 0; x < keys.length; x++) {
+            for (int y = 0; y < key.length(); y++) {
+                if (keys[x].equals(key.charAt(y) + "")) {
+                    num[y] = x;
+                    break;
+                }
+            }
+        }
+        return num;
+    }
+     
     
-     private String[] splitSubString(String keyDecryption,String cipherText,String[] arrayCipherText)
-    {
-        int step = cipherText.length()/keyDecryption.length();
-        int indexEnd = step;
-        int numberSubString=keyDecryption.length();
-        int i = 0;
-        int indexStart = 0;
-         while (i != numberSubString) {
-             arrayCipherText= insertElement(arrayCipherText, cipherText.substring(indexStart, indexEnd), arrayCipherText.length);
-             indexStart+=step;
-             indexEnd+=step;
-             i++;
-        } 
-         return arrayCipherText;
-    }
+    
 
     private String[] Encryption(String keyEncryption,String plainText ,String[] s){   
         return s;
@@ -219,17 +208,7 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
     }
 
 
-   
-     private static String[] insertElement(String original[],
-     String element, int index) {
-      int length = original.length;
-      String destination[] = new String[length + 1];
-      System.arraycopy(original, 0, destination, 0, index);
-      destination[index] = element;
-      System.arraycopy(original, index, destination, index
-      + 1, length - index);
-      return destination;
-   }
+ 
    
    
     private void btnEncryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptionActionPerformed
