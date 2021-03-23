@@ -5,6 +5,9 @@
  */
 package ChuyenDichDong;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  *
  * @author buile
@@ -125,11 +128,112 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDecryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecryptionActionPerformed
-        // TODO add your handling code here:
+        try
+        {
+        String keyDecryption =   txtKeyDecryption.getText().replaceAll("\\s", "");
+        String cipherText =  tereaDecryption.getText().replaceAll("\\s", "");
+        if(checkInput(keyDecryption, cipherText)) {
+            String[] arraylainText = {};
+            arraylainText=Decryption(keyDecryption, cipherText, arraylainText);
+            String plainText="";
+            for (String str : arraylainText) {
+                 plainText += str;
+            }    
+            tareaEcryption.setText(plainText);
+        }
+        else
+        {
+            System.out.println("CipherText Hoac Key Giai Ma Sai");
+        }
+        }
+    
+         catch(Exception  e){
+         System.out.println("Vui long nhap day du thong tin");
+       }
+        
     }//GEN-LAST:event_btnDecryptionActionPerformed
+     
+    private boolean checkInput(String keyDecryption,String cipherText)
+    {
+        
+             if (cipherText.length()%keyDecryption.length()!=0 || cipherText.length()/keyDecryption.length() < keyDecryption.length())       
+                 return false;
+            
+             else
+                 return true;
+        
+    }
+  
+    private String[] Decryption(String keyDecryption,String cipherText,String[] s)
+    {
+        String sortCipherText= sortCipherText(keyDecryption, cipherText, s);
+        int step = cipherText.length()/keyDecryption.length();
+        String[] arrayPlainText = {};  
+        for (int i = 1; i < step; i++) {
+            for (int indexStart = i; indexStart < cipherText.length(); indexStart+=step) {
+                arrayPlainText =insertElement(arrayPlainText, sortCipherText.substring(indexStart,indexStart+1), arrayPlainText.length);
+            }
+        }
+        return arrayPlainText;
+    }
+     private String sortCipherText(String keyDecryption,String cipherText,String[] arrayCipherText)
+    {
+        arrayCipherText = splitSubString(keyDecryption, cipherText, arrayCipherText);
+        String plainText="";
+        int numberLoop = 0;
+        while(numberLoop != keyDecryption.length())
+        {
+            for (int j = 0; j < keyDecryption.length(); j++) {
+                  String partCipherText = arrayCipherText[j];
+                  String firstpartCipherText = partCipherText.substring(0,1);
+             if(Character.toString(keyDecryption.charAt(numberLoop)).startsWith(firstpartCipherText))
+            {
+                plainText=plainText+partCipherText;
+                break;
+            }
+            }          
+            numberLoop++;
+        }
+        return plainText;
+    }
+    
+     private String[] splitSubString(String keyDecryption,String cipherText,String[] arrayCipherText)
+    {
+        int step = cipherText.length()/keyDecryption.length();
+        int indexEnd = step;
+        int numberSubString=keyDecryption.length();
+        int i = 0;
+        int indexStart = 0;
+         while (i != numberSubString) {
+             arrayCipherText= insertElement(arrayCipherText, cipherText.substring(indexStart, indexEnd), arrayCipherText.length);
+             indexStart+=step;
+             indexEnd+=step;
+             i++;
+        } 
+         return arrayCipherText;
+    }
 
+    private String[] Encryption(String keyEncryption,String plainText ,String[] s){   
+        return s;
+              
+    }
+
+
+   
+     private static String[] insertElement(String original[],
+     String element, int index) {
+      int length = original.length;
+      String destination[] = new String[length + 1];
+      System.arraycopy(original, 0, destination, 0, index);
+      destination[index] = element;
+      System.arraycopy(original, index, destination, index
+      + 1, length - index);
+      return destination;
+   }
+   
+   
     private void btnEncryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptionActionPerformed
-        // TODO add your handling code here:
+   
     }//GEN-LAST:event_btnEncryptionActionPerformed
 
     /**
@@ -166,7 +270,7 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
             }
         });
     }
-
+    private String[] alphabet = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDecryption;
     private javax.swing.JButton btnEncryption;
