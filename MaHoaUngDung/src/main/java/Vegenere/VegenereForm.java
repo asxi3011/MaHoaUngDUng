@@ -5,11 +5,16 @@
  */
 package Vegenere;
 
+import java.awt.Component;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author buile
  */
 public class VegenereForm extends javax.swing.JFrame {
+
+    private Component frame;
 
     /**
      * Creates new form Vegenere
@@ -157,13 +162,39 @@ public class VegenereForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnEncryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptionActionPerformed
+        try
+        {
         String keyEncryption = txtKeyEncryption.getText().replaceAll("\\s",""); 
         String plainText = tareaEcryption.getText().replaceAll("\\s","");
-        String keyGeneration = Generation(plainText, keyEncryption);
-        txtKeyGenerationEncryption.setText(keyGeneration);
-        tereaDecryption.setText(encryption(plainText, keyGeneration));
+        if(keyEncryption.length()==0 || plainText.length()==0)
+             JOptionPane.showMessageDialog(frame, "Khong được bỏ trống");
+        else
+        {
+            if(checkNumInString(plainText) &&checkNumInString(keyEncryption))
+            {
+                  String keyGeneration = Generation(plainText, keyEncryption);
+                  txtKeyGenerationEncryption.setText(keyGeneration);
+                  tereaDecryption.setText(encryption(plainText, keyGeneration));
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(frame, "Key và plainText không được chứa số");
+            }
+      
+        }
+        }
+        catch(Exception e)
+                {
+                     JOptionPane.showMessageDialog(frame, e);
+                }
     }//GEN-LAST:event_btnEncryptionActionPerformed
-    
+    private static boolean checkNumInString(String key)
+    {
+         if(key.matches(".*\\d.*")==true)
+          return false;        
+        return true;
+                  
+    }
     private String Generation (String plainText,String keyEncryption){ // HÀM BIỂN ĐỔI TỪ KEY THÀNH KEY GENERATION
         int numberGeneration = plainText.length()/keyEncryption.length();
         int numberCheck = plainText.length()%keyEncryption.length();
@@ -223,11 +254,35 @@ public class VegenereForm extends javax.swing.JFrame {
     }
    
     private void btnEncryption1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryption1ActionPerformed
-         String keyDecryption = txtKeyDecryption.getText().replaceAll("\\s",""); 
+         try
+        {
+            String keyDecryption = txtKeyDecryption.getText().replaceAll("\\s",""); 
         String CipherText = tereaDecryption.getText().replaceAll("\\s","");
-        String keyGeneration = Generation(CipherText, keyDecryption);
-        txtKeyGenerationDecryption.setText(keyGeneration);
-        tareaEcryption.setText(decryption(CipherText, keyGeneration));
+        if(keyDecryption.length()==0 || CipherText.length()==0)
+             JOptionPane.showMessageDialog(frame, "Khong được bỏ trống");
+        else
+        {
+            if(checkNumInString(CipherText) &&checkNumInString(keyDecryption))
+            {
+                 String keyGeneration = Generation(CipherText, keyDecryption);
+                  txtKeyGenerationDecryption.setText(keyGeneration);
+                 tareaEcryption.setText(decryption(CipherText, keyGeneration));
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(frame, "Key và plainText không được chứa số");
+            }
+      
+        }
+        }
+        catch(Exception e)
+                {
+                     JOptionPane.showMessageDialog(frame, e);
+                } 
+        
+        
+        
+        
     }//GEN-LAST:event_btnEncryption1ActionPerformed
 
     /**

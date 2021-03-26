@@ -134,28 +134,36 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
     private void btnDecryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecryptionActionPerformed
         
         try
-        {   
+        {             
         String keyDecryption =   txtKeyDecryption.getText().replaceAll("\\s", "");
         String cipherText =  tereaDecryption.getText().replaceAll("\\s", "");
         if(keyDecryption.length()==0 || cipherText.length()==0)
              JOptionPane.showMessageDialog(frame, "Khong được bỏ trống");
         else
         {
-            String arraylainText=decryptCT(keyDecryption, cipherText);
-            tareaEcryption.setText(arraylainText); 
+            if(checkNumInString(keyDecryption) && checkNumInString(cipherText) )
+            {
+                 if(cipherText.length()%keyDecryption.length()==0){
+                 String arraylainText=decryptCT(keyDecryption, cipherText);
+                 tareaEcryption.setText(arraylainText);
+                 }
+                else{
+                JOptionPane.showMessageDialog(frame, "CipherText phải chia hết cho key");
+                }
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(frame, "Key và cipherText không được chứa số");
+            }
         }
-           
         }
          catch(Exception  e){
             Component frame = null;
-         JOptionPane.showMessageDialog(frame, "Key hoặc cipher text kh hợp lệ");
-       }
-        
+         JOptionPane.showMessageDialog(frame, e);
+       } 
     }//GEN-LAST:event_btnDecryptionActionPerformed
-     
-  
-  
-    public static String decryptCT(String key, String text) {
+   
+    private static String decryptCT(String key, String text) {
         int[] arrange = arrangeKey(key);
         int lenkey = arrange.length;
         int lentext = text.length();
@@ -180,10 +188,9 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
                 dec = dec + grid[x][y];
             }
         }
-
         return dec;
     }
-    public static int[] arrangeKey(String key) {
+    private static int[] arrangeKey(String key) {
         //arrange position of grid
         String[] keys = key.split("");
         Arrays.sort(keys);
@@ -198,21 +205,19 @@ public class ChuyenDichDongForm extends javax.swing.JFrame {
         }
         return num;
     }
-     
-    
-    
-
+    private static boolean checkNumInString(String key)
+    {
+         if(key.matches(".*\\d.*")==true)
+          return false;        
+        return true;
+                  
+    }
     private String[] Encryption(String keyEncryption,String plainText ,String[] s){   
         return s;
               
     }
-
-
- 
-   
-   
     private void btnEncryptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncryptionActionPerformed
-   
+                            
     }//GEN-LAST:event_btnEncryptionActionPerformed
 
     /**
